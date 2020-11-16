@@ -1,0 +1,9 @@
+[submodule "CLI"]
+	path = CLI
+	url = https://github.com/Harsh14901/CommonAudioVideoCLI.git
+[submodule "Server"]
+	path = Server
+	url = https://github.com/Harsh14901/CommonAudioVideoServer.git
+[submodule "Electron"]
+	path = Electron
+	url = https://github.com/saptarshi1234/CommonAudioVideoGUI
