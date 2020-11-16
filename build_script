@@ -1,0 +1,38 @@
+SHELL := /bin/bash
+all: build-electron clean
+	echo "DONE!";
+
+first:
+	mkdir -p .cache
+
+venv:
+	python3 -m venv venv
+	. venv/bin/activate; \
+	cd CLI/; \
+	pip3 install -r requirements.txt; \
+	pip3 install -r dev-requirements.txt;
+	
+build-server: first 
+	cd Server/; \
+	npm install && \
+	npm run create-executable && \
+	mv CAV_server ../.cache/;
+	
+build-cli: venv build-server
+	. venv/bin/activate; \
+	cd ./CLI/cli/; \
+	pyinstaller -F --add-data '../../.cache/CAV_server:.'  ./main.py -n LocalParty && \
+	mv dist/LocalParty ../../.cache/;
+
+build-electron: build-cli
+	cp .cache/LocalParty ./Electron/ElectronGUI/
+	cd Electron/ElectronGUI/; \
+	npm install; \
+	npm run make; \
+	mv out/ ../../dist/;
+	
+clean:
+	rm -rf .cache/ venv/
+	rm Electron/ElectronGUI/LocalParty
+	cd CLI/cli && \
+	rm -rf dist/ build/ LocalParty.spec;
