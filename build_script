@@ -25,7 +25,7 @@ build-cli: venv build-server
 	mv dist/LocalParty ../../.cache/;
 
 build-electron: build-cli
-	cp .cache/LocalParty ./Electron/ElectronGUI/
+	yes | cp .cache/LocalParty ./Electron/ElectronGUI/binaries/
 	cd Electron/ElectronGUI/; \
 	npm install; \
 	npm run make; \
@@ -33,6 +33,5 @@ build-electron: build-cli
 	
 clean:
 	rm -rf .cache/ venv/
-	rm Electron/ElectronGUI/LocalParty
 	cd CLI/cli && \
-	rm -rf dist/ build/ LocalParty.spec;
+	rm -rf build/ LocalParty.spec;

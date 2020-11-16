@@ -11,7 +11,7 @@ all:
 	mkdir -p binaries
 	yes | cp ../../CLI/cli/dist/LocalParty binaries/
 	npm run make
-
 	cd ../../
-	ln -s Electron/ElectronGUI/out/ out
+	mkdir -p out
+	mv Electron/ElectronGUI/out/ out/
 
