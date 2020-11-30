@@ -13,5 +13,5 @@ all:
 	npm run make
 	cd ../../
 	mkdir -p out
-	mv Electron/ElectronGUI/out/ out/
+	mv Electron/ElectronGUI/out/ ./
 
