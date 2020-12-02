@@ -19,7 +19,7 @@ conflicts=(audioshare)
 replaces=()
 md5sums=('6afea0560ab51bef53beeeec0b2a0b3a')
 backup=()
-source=("${url}/releases/download/v1.0/${_foldername}.zip")
+source=("${url}/releases/download/1.0/${_foldername}.zip")
 noextract=()
 package() {
 	cd "${pkgname}-linux-x64"

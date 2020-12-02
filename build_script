@@ -14,7 +14,7 @@ venv:
 	
 build-server: first 
 	cd Server/; \
-	npm install && \
+	npm ci && \
 	npm run create-executable && \
 	mv CAV_server ../.cache/;
 	
@@ -25,9 +25,10 @@ build-cli: venv build-server
 	mv dist/LocalParty ../../.cache/;
 
 build-electron: build-cli
+	mkdir -p ./Electron/ElectronGUI/binaries/
 	yes | cp .cache/LocalParty ./Electron/ElectronGUI/binaries/
 	cd Electron/ElectronGUI/; \
-	npm install; \
+	npm ci; \
 	npm run make; \
 	mv out/ ../../dist/;
 	
