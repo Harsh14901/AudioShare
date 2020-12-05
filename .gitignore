@@ -1,2 +1,6 @@
 out
 dist/
+venv/
+.cache
+*.log
+invite_link.*
