@@ -17,7 +17,7 @@ Move-Item .\dist\LocalParty.exe ..\..\.cache\ -force
 
 cd ..\..
 mkdir -p .\Electron\ElectronGUI\binaries\
-Copy-Item .cache\LocalParty .\Electron\ElectronGUI\binaries\ -force
+Copy-Item .cache\LocalParty.exe .\Electron\ElectronGUI\binaries\ -force
 cd Electron\ElectronGUI\
 npm ci
 npm run make
