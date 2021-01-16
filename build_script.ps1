@@ -1,28 +1,34 @@
-mkdir -p .cache
-
-python.exe -m venv venv
-.\venv\Scripts\Activate.ps1
-cd CLI
-pip install -r requirements.txt
-pip install -r dev-requirements.txt
+mkdir .cache
 	
-cd ..\Server
+cd .\Server
 npm ci 
 npm run create-executable
 Move-Item .\CAV_server.exe ..\.cache -force
-	
-cd ..\CLI\cli
-pyinstaller -F --add-data '..\..\.cache\CAV_server.exe;.' .\main.py -n LocalParty
+
+cd ..\CLI
+
+python3 -m venv venv
+.\venv\Scripts\activate
+pip install -r requirements.txt
+pip install -r dev-requirements.txt
+
+cd .\cli
+
+pyinstaller -F --add-data '..\..\.cache\CAV_server.exe;.' '.\main.py' -n LocalParty
 Move-Item .\dist\LocalParty.exe ..\..\.cache\ -force
 
-cd ..\..
-mkdir -p .\Electron\ElectronGUI\binaries\
-Copy-Item .cache\LocalParty.exe .\Electron\ElectronGUI\binaries\ -force
-cd Electron\ElectronGUI\
+cd ..\..\Electron\ElectronGUI
+
+mkdir binaries
+Copy-Item ..\..\.cache\LocalParty.exe .\binaries\ -force
 npm ci
 npm run make
-mv out\ ..\..\dist\
+Move-Item out\ ..\..\dist\
 	
-rm -rf .cache\ 
-cd CLI\cli
-rm -rf build\ LocalParty.spec;
+cd ..\..\
+
+rm -r .cache\ 
+rm -r .\CLI\cli\build\;
+rm -r .\CLI\cli\dist\;
+rm .\CLI\cli\LocalParty.spec
+rm -r .\Electron\ElectronGUI\binaries
