@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=audioshare
+Comment=My Electron application description
+GenericName=audioshare
+Exec=audioshare %U
+Icon=audioshare
+Type=Application
+StartupNotify=true
+Categories=Utility;
+

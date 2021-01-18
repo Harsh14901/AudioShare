@@ -1,0 +1,2 @@
+black
+pyinstaller==4.0

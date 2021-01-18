@@ -1,0 +1,48 @@
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/axios.min.js"></script>
+    
+</head>
+
+<body>
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <audio controls id="audiosrc" src=""></audio>
+    <button id="joinRoom" class="btn btn-outline-success">Click here to join the party!!</button>
+    <style>
+        #joinRoom {
+            display: block;
+            position: relative;
+            margin: auto;
+            top: 50%;
+        }
+
+        #audiosrc {
+            display: block;
+            position: relative;
+            left: 50%;
+            top: 50%;
+            /* width: 60%; */
+            font-size: 60px;
+            transform: translate(-50%, -50%);
+        }
+
+        body {
+            background-color: #323232;
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            font-size: 60px;
+        }
+    </style>
+    <script src="/js/index.js"></script>
+    
+</body>
+
+</html>

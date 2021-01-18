@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Common Video Audio Connect</title>
+    <script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <script>if (window.module) module = window.module;</script>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <h1>Common Video Audio Connect</h1>
+        <h3>File Selection</h3><br>
+
+        <form>
+            <label for="directorySelect" class="btn btn-outline-secondary">Select a directory</label>
+            <input style="visibility:hidden" id="directorySelect" type="file" webkitdirectory
+                onchange="handleFileSelect(event)">
+
+            <label for="fileSelect" class="btn btn-outline-secondary"> Select multiple files</label>
+            <input style="visibility:hidden" id="fileSelect" type="file" multiple onchange="handleFileSelect(event)">
+            <div style="margin-top:5px" class="form-check">
+                <label for="onlyHost" class="form-check-label">
+                    <input class="form-check-input" type="checkbox" name="onlyHost" id="onlyHost">Restrict playback
+                    access to host only!
+                </label>
+            </div>
+            <div class="form-check">
+                <label for="qr" class="form-check-label">
+                    <input class="form-check-input" type="checkbox" name="qr" id="qr">Display QR
+                </label>
+            </div>
+        </form>
+        <br>
+        <div id="selectedFiles" class="card">
+            <div class="card-header">
+                Selected Files
+            </div>
+            <ul id="listFiles" class="list-group list-group-flush">
+                <li style="display: none;" id="ListItem" style="display: none;">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-1"><button onclick=clearFile(event) class="btn btn-outline-light"><img
+                                        style="height:40px" src="../icons/cross.png" alt=""></button>
+                            </div>
+                            <div class="col-sm-11">
+                                <h5 class="card-title">Card title</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <br>
+        <button class="btn btn-secondary" id="back">
+            < Back</button> <button class="btn btn-success" id="next">Next >
+        </button>
+    </div>
+
+
+    <script>
+        function clearFile(e) {
+            let li = e.target.parentNode.parentNode.parentNode.parentNode;
+            console.log(li);
+            filePath = li.getElementsByTagName('h6')[0];
+            let index = allFiles.indexOf(filePath);
+            allFiles.splice(index);
+            li.parentNode.removeChild(li);
+
+        }
+        const allFiles = [];
+        const handleFileSelect = (event) => {
+            const files = event.target.files;
+            Object.values(files).forEach((file) => {
+                if (file.type.startsWith('video') && !allFiles.includes(file.path)) {
+                    console.log(file);
+                    displayFileCard(file);
+                    allFiles.push(file.path);
+                }
+
+            })
+        }
+        const displayFileCard = (file) => {
+            const node = document.querySelector('#ListItem');
+            const newLi = node.cloneNode(true);
+            newLi.style.display = "block";
+
+            newLi.getElementsByTagName('h5')[0].innerText = file.name;
+            newLi.getElementsByTagName('h6')[0].innerText = file.path;
+
+            document.querySelector('#listFiles').appendChild(newLi);
+        }
+        const {
+            ipcRenderer
+        } = require('electron');
+        const nextButton = document.querySelector('#next');
+        nextButton.addEventListener('click', (e) => {
+            if (allFiles.length <= 0) {
+                alert('Please select some videos to play');
+            } else {
+                const data = {
+                    'files': allFiles,
+                    'onlyHost': document.querySelector('#onlyHost').checked,
+                    'qr': document.querySelector('#qr').checked
+                }
+                ipcRenderer.send('start_cli', data);
+                ipcRenderer.send('switch_page', 'terminal.html');
+            }
+        });
+        const backButton = document.querySelector('#back');
+        backButton.addEventListener('click', (e) => {
+            ipcRenderer.send('switch_page', 'index.html')
+        });
+    </script>
+</body>
+
+</html>

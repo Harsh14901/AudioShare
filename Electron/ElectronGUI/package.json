@@ -1,0 +1,78 @@
+{
+  "name": "audioshare",
+  "productName": "audioshare",
+  "version": "1.0.0",
+  "description": "My Electron application description",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "echo \"No linting configured\""
+  },
+  "keywords": [],
+  "author": {
+    "name": "DevClub IITD",
+    "email": "devclub.iitd@gmail.com"
+  },
+  "license": "MIT",
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "linux"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {
+            "options": {
+              "depends": [
+                "vlc",
+                "ffmpeg"
+              ],
+              "icon": "icons/audioshare.png"
+            }
+          }
+        },
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "description": "An audiosharing application"
+          }
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "bootstrap": "^4.5.3",
+    "cross-spawn": "^7.0.3",
+    "electron": "^10.1.5",
+    "electron-is-dev": "^1.2.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "jquery": "^3.5.1",
+    "open": "^7.3.0",
+    "tree-kill": "^1.2.2",
+    "xterm": "^4.9.0",
+    "xterm-addon-fit": "^0.4.0"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.54",
+    "@electron-forge/maker-deb": "^6.0.0-beta.54",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.54",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
+    "@electron-forge/maker-zip": "^6.0.0-beta.54",
+    "electron": "^10.1.5",
+    "eslint": "^7.13.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-google": "^0.14.0",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.1.4",
+    "prettier": "^2.1.2"
+  }
+}

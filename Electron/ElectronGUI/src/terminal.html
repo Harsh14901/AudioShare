@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+
+<head>
+    <script>if (typeof module === 'object') { window.module = module; module = undefined; }</script>
+    <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="../node_modules/xterm/css/xterm.css" />
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+
+    <script src="../node_modules/xterm/lib/xterm.js"></script>
+    <script src="../node_modules/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
+    <script>if (window.module) module = window.module;</script>
+</head>
+
+<body>
+    <div class="container"></div>
+    <div style="margin:5px">
+        <h1 style="font-size: 40px; font-weight: bold;">Output for started process</h1>
+        <div style="width: 100%;height: 50%;" id="terminal"></div>
+        <iframe id="hostVideo" style="display: none;" width="100%" height="100%">
+
+        </iframe>
+        <br>
+
+        <button class="btn btn-secondary" style="margin-left:20px" id="back">Back</button>
+        <button class="btn btn-danger" id="killProcess">Kill process</button>
+        <button class="btn btn-primary float-right" id="show_qr" style="margin-right:30px">Show QR</button>
+        <button class="btn btn-success float-right" id="show_video" style="margin-right:10px">Show video</button>
+        
+        
+    </div>
+
+    <script>
+        var terminal = document.getElementById('terminal');
+        const { ipcRenderer } = require('electron');
+
+        var term = new Terminal();
+        const fitAddon = new FitAddon.FitAddon();
+
+        term.loadAddon(fitAddon);
+        term.open(terminal);
+        fitAddon.fit();
+        
+        let inter = setInterval(() => {
+            ipcRenderer.send('terminalOutput');
+        }, 1000);
+
+
+        ipcRenderer.on('terminalOutput', (event, arg) => {
+            console.log(arg.toString());
+            if (arg == "No process found") {
+                clearInterval(inter);
+            }
+            arg = arg.replaceAll('\n', '\n\r');
+            term.write(`\r${arg.toString()}`);
+        })
+
+        document.querySelector('#killProcess').addEventListener('click', (e) => {
+            ipcRenderer.send('killCLI');
+            term.write('\x1bc')
+        })
+
+        document.querySelector('#back').addEventListener('click', (e) => {
+            ipcRenderer.send('switch_page', 'file_select.html')
+        })
+        document.querySelector('#show_qr').addEventListener('click', e => {
+            console.log('about to send qr')
+            ipcRenderer.send('show_qr')
+        })
+
+        document.querySelector('#show_video').addEventListener('click', (e) => {
+            ipcRenderer.send('show_video');
+        })
+        
+        // term.write('Hello from \x1B[1;3;31mxterm.js\x1B[0m $ ');
+    </script>
+</body>
+
+</html>
