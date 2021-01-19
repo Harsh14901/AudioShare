@@ -14,7 +14,7 @@ pip install -r dev-requirements.txt
 
 cd .\cli
 
-pyinstaller -F --add-data '..\..\.cache\CAV_server.exe;.' '.\main.py' -n LocalParty
+pyinstaller -F --add-data '..\..\.cache\CAV_server.exe;.' --add-data 'ffmpeg.exe;.' '.\main.py' -n LocalParty
 Move-Item .\dist\LocalParty.exe ..\..\.cache\ -force
 
 cd ..\..\Electron\ElectronGUI
@@ -27,7 +27,7 @@ Move-Item out\ ..\..\dist\ -force
 	
 cd ..\..\
 
-rm -r .cache\ 
+# rm -r .cache\ 
 rm -r .\CLI\cli\build\;
 rm -r .\CLI\cli\dist\;
 rm .\CLI\cli\LocalParty.spec

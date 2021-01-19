@@ -30,10 +30,9 @@ class SignalReceiver(socketio.ClientNamespace):
         from util import print_url
         print_url(url)
 
+        from util import print_qr,generate_qr
+        generate_qr(url)
         if self.ARGS["qr"]:
-            from util import print_qr,generate_qr
-
-            generate_qr(url)
             print(f"\n[{colored('$','blue')}] Or scan the QR code given below")
             print_qr()
 
