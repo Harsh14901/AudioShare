@@ -12,28 +12,15 @@ def spawn_server():
     time.sleep(1)
 
     from util import resource_path
-    proc = subprocess.Popen(resource_path('CAV_server.exe'),
+    subprocess.Popen(resource_path('CAV_server.exe'),
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
-    # for line in iter(proc.stdout.readline, ""):
-    #     if b"npm ERR!" in line:
-    #         print(colored(line, "red"))
-    #         print(
-    #             f"[{colored('-','red')}] An error has occured while starting the server\nRestarting the server"
-    #         )
-    #         os.system("taskkill /IM node /F")
-    #         os.system("taskkll /IM npm /F")
-    #         sys.exit(-1)
-    #     if b"Press CTRL-C to stop" in line:
-    #         break
 
     time.sleep(1)
 
 
 def kill_dependencies():
-    # print(colored('Disconnected','red'))
-    # print(colored('Exiting Now, Goodbye!', 'green'))
     subprocess.call('taskkill /IM "node.exe" /F',shell= True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def kill_self():
@@ -46,3 +33,7 @@ def print_qr():
 def start_server(args):
     from server_comm import ServerConnection
     return ServerConnection(args)
+
+def get_ffmpeg():
+    from util import resource_path
+    return resource_path('ffmpeg.exe')

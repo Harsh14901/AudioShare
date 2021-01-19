@@ -56,3 +56,5 @@ def start_server(args):
 
     return server
 
+def get_ffmpeg():
+    return 'ffmpeg'

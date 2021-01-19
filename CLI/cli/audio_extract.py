@@ -1,4 +1,3 @@
-import ffmpeg
 import sys
 import os
 import subprocess
@@ -9,10 +8,13 @@ from termcolor import colored
 from itertools import product
 from multiprocessing import Pool
 
-from util import resource_path
+from util import platform_dependent
+
+import linux_util
+import win_util
 
 BITRATE = 1000 * 16
-ext = '.exe' if sys.platform == 'win32' else ''
+ffmpeg = platform_dependent(linux=linux_util.get_ffmpeg, windows=win_util.get_ffmpeg)
 
 
 def path2title(path):
@@ -37,10 +39,9 @@ def extract(path, quality="medium"):
     """ Extractor function utilizing ffmpeg to extract audio from a given video file """
 
     try:
-        # file = ffmpeg.input(path)
 
         output_path = path[:-3] + "ogg"
-        cmd = [resource_path('ffmpeg'+ext), '-i', path ,'-vn', '-acodec', 'libvorbis', output_path]
+        cmd = [ffmpeg, '-i', path ,'-vn', '-acodec', 'libvorbis', output_path]
         if os.path.exists(output_path):
             print(
                 f"[{colored('#','yellow')}] Audio file {colored(path2title(output_path),'green')} already exists"
@@ -54,12 +55,6 @@ def extract(path, quality="medium"):
         from util import Animation
 
         anim = Animation()
-        # file.audio.output(
-        #     output_path,
-        #     acodec="libvorbis",
-        #     audio_bitrate=BITRATE * get_multiplier(quality),
-        #     loglevel=0,
-        # ).run()
         subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).communicate()
         anim.complete()
         print(
@@ -78,7 +73,7 @@ def extract(path, quality="medium"):
 
 
 def get_duration(file):
-    cmd = [resource_path('ffmpeg'+ext),'-i',file]
+    cmd = [ffmpeg,'-i',file]
 
 
     time_str = subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).communicate()
@@ -100,9 +95,8 @@ def convert2mkv(path):
         from util import Animation
 
         anim = Animation()
-        cmd = [resource_path('ffmpeg'+ext), '-i', path , '-codec', 'copy', out_path]
+        cmd = [ffmpeg, '-i', path , '-codec', 'copy', out_path]
         subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).communicate()
-        # ffmpeg.input(path).output(out_path, codec="copy", loglevel=0).run()
         anim.complete()
         print(
             f"[{colored('+','green')}] Successfully converted {colored(path2title(out_path),'green')} to MKV format"
