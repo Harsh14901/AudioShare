@@ -60,16 +60,13 @@ class SignalReceiver(socketio.ClientNamespace):
 
     def on_play(self, *args, **kwargs):
         try:
-            state = args[0]
             print(f"[{colored('$','blue')}] Play signal recieved")
             self.player.play()
-        except Exception as e:
-            print('lots of issues while playing',e)
-        
+        except:
+            pass
 
     def on_pause(self, *args, **kwargs):
         try:
-            state = args[0]
             print(f"[{colored('$','blue')}] Pause signal recieved")
             self.player.pause()
         except:
@@ -86,11 +83,7 @@ class SignalReceiver(socketio.ClientNamespace):
             self.player.seek(seek_time)
         except:
             pass
-        
-
-    
-
-
+   
 class ServerConnection:
     # Class that handles all connections to the server
     server_instance = None
@@ -123,7 +116,7 @@ class ServerConnection:
 
         self.signals = SignalReceiver("/",params = self.ARGS)
 
-        self.signals.bind()
+        platform_dependent(linux=self.signals.bind)
 
         self.sio.register_namespace(self.signals)
 
@@ -163,4 +156,3 @@ class ServerConnection:
 
     def addAudioPath(self, videoPath, audioPath):
         self.tracks[videoPath] = ("audioPath", audioPath)
-
