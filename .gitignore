@@ -5,3 +5,4 @@ venv/
 *.log
 invite_link.*
 .vscode/
+binaries

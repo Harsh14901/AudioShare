@@ -23,7 +23,7 @@
     "prettier-fix": "prettier --write './**/*.ts'",
     "lint-tests": "npm run eslint-test;npm run prettier-test",
     "lint-fixes": "npm run eslint-fix;npm run prettier-fix",
-    "create-executable": "nexe -i build/src/server.js -r ./src/views/**/* -r ./src/assets/**/* -t x86_64-10.0.0 -o CAV_server"
+    "create-executable": "nexe -i build/src/server.js -r \"./src/views/**/*\" -r \"./src/assets/**/*\" -t x86_64-10.0.0 -o CAV_server"
   },
   "repository": {
     "type": "git",

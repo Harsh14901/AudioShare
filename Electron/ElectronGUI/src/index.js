@@ -71,7 +71,7 @@ app.on("window-all-closed", () => {
       if(process.platform == 'win32')
         treekill(pyCliStat.process.pid);
       else
-        kill(pyCliStat.process.pid);
+        kill(-pyCliStat.process.pid,'SIGINT');
     }
     app.quit();
   }
@@ -110,12 +110,12 @@ const runCLI = async (arg) => {
     commandArgs.push("--qr");
   }
   const command = `"${binary_dir.toString()}/LocalParty${process.platform == 'win32'?'.exe':''}"`;
-  console.log(command);
+  console.log(commandArgs);
   
   const pyCli = spawnWIN(command, commandArgs, {
     cwd: cache_dir,
     shell: true,
-    detached: false,
+    detached: process.platform != 'win32',
   });
   
   pyCliStat.process = pyCli;
@@ -174,11 +174,7 @@ ipcMain.on("show_qr", (event) => {
 // eslint-disable-next-line no-unused-vars
 ipcMain.on("killCLI", (event, arg) => {
   if (!pyCliStat.process) return;
-
-  if(process.platform == 'win32')
-    treekill(pyCliStat.process.pid);
-  else
-    kill(pyCliStat.process.pid);
+  treekill(pyCliStat.process.pid,'SIGINT');
 
   console.log("CLI killed");
 

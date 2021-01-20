@@ -63,8 +63,8 @@ class SignalReceiver(socketio.ClientNamespace):
             state = args[0]
             print(f"[{colored('$','blue')}] Play signal recieved")
             self.player.play()
-        except:
-            pass
+        except Exception as e:
+            print('lots of issues while playing',e)
         
 
     def on_pause(self, *args, **kwargs):
@@ -123,7 +123,7 @@ class ServerConnection:
 
         self.signals = SignalReceiver("/",params = self.ARGS)
 
-        platform_dependent(windows=self.signals.bind)
+        self.signals.bind()
 
         self.sio.register_namespace(self.signals)
 

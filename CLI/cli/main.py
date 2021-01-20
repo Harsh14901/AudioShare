@@ -86,6 +86,7 @@ def initialize(videos, server, first=False):
             server.upload(video, video[:-3] + "ogg")
         else:
             server.addAudioPath(video, video[:-3] + "ogg")
+            TO_CLEAR.append(video[:-3] + "ogg")
 
         platform_dependent(video, linux=player.enqueue)
         
@@ -124,7 +125,7 @@ if __name__ == "__main__":
 
     sys.stdout = Unbuffered(sys.stdout)
     signal.signal(signal.SIGINT, exitHandler)
-    colorama.init()
+    platform_dependent(windows=colorama.init)
     args = parse()
 
     platform_dependent(linux=nop if args.web else spawn_server, windows=spawn_server)
