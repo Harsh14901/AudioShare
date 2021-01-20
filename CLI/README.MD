@@ -8,19 +8,16 @@
 
 To run this project you need to have python 3.6 or higher installed
 
+**Note:** Windows users need to have the `ffmpeg` executable in the `CLI\cli\` directory for running the CLI.
+
 ### Installing
 
 - Cloning the Repository
 
     ```bash
-    git clone https://github.com/devclub-iitd/CommonAudioVideoCLI.git
-    cd CommonAudioVideoCLI
+    $ git clone https://github.com/Harsh14901/AudioShare.git
+    $ cd CLI/
     ```
-- To run locally you will also need to clone the server repo in the same directory in which CommonAudioVideoCLI is.
-
-```bash
-git clone https://github.com/devclub-iitd/CommonAudioVideoServer.git local
-```
 
 - Installing dependencies
 
@@ -31,21 +28,51 @@ git clone https://github.com/devclub-iitd/CommonAudioVideoServer.git local
 - Running the CLI
 
     ```bash
-    cd CommonAudioVideoCLI/cli
+    cd CLI/cli
     python3 main.py [--flags]
     ```
 
+
+## Build
+
+### Linux
+Run the following command in the root directory of the repo
+```bash
+$ make -f build_script build_cli
+```
+
+You will find the built CLI as `./cache/LocalParty`
+
+### Windows
+- Build the Server by running the npm script to generate a server binary. It should be named CAV_server
+  ``` powershell
+  $ cd Server
+  $ npm run create-executable
+  $ cp CAV_server ..\CLI\cli\
+  $ cd ..\CLI\
+  ```
+
+- install requirements.txt and dev-requirements.txt
+    ```bash
+    $ pip3 install -r requirements.txt
+    $ pip3 install -r dev-requirements.txt
+    ```
+- Build the CLI
+    ```bash
+    $ cd cli
+    $ pyinstaller -F --add-data '.\CAV_server.exe;.' --add-data 'ffmpeg.exe;.' '.\main.py' -n LocalParty
+
+    ```
+- Find the executable as `dist\LocalParty.exe` and enjoy the Party
 ## CLI flags
 
 | FLAG NAME | arguments | usage | required | default
 |--|--|--|--|--
 | - - file / -f | path to one or more video files or directories(in which case all video files inside the directory are taken to form a playlist) | indicates which videos are to be converted and queued | yes
-| -- sub / -s |  path to one more subtitle files in order | adds the subtitle track to the playback | no| -
 | -- qr| - |encodes the invite link as a qr code and prints it to the console| no| false
 | --audio-quality| low/medium/good/high | the quality of the audio to be extracted from the video file| no | medium
 |--web| - | use already hosted webserver | no | false 
 |--control| - | only the host can control playback | no | false
-| --force-rebuild| - | Use this to rebuild the server (must be used the first time) | no | false
 ## Socket events
 
 | EVENT NAME | action
@@ -73,12 +100,6 @@ Socket events, both sent and received follow the same structure as shown above a
 - [socket](https://docs.python.org/3/library/socket.html) - tcp sockets to issue commands to VLC player
 
 
-## To Build
-- first build the CommonAudioVideoServer by running the npm script to generate a server binary. It should be named CAV_server
-- install requirements.txt and dev-requirements.txt
-- copy the server binary to cli/
-- run make
-- find the file in cli/dist/ and enjoy the Party
 
 ## License
 

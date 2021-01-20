@@ -8,16 +8,16 @@
 
 ### Prerequisites
 
-To run this project in the development mode, you'll need to have a basic environment with NodeJS 13+ installed. To use the database, you'll need to have MongoDB installed and running on your machine at the default port (27017).
+To run this project in the development mode, you'll need to have a basic environment with NodeJS 13+ installed. 
 
 ### Installing
 
 **Cloning the Repository**
 
-```
-$ git clone https://github.com/devclub-iitd/CommonAudioVideoServer.git
+```bash
+$ git clone https://github.com/Harsh14901/AudioShare.git
 
-$ cd CommonAudioVideoServer
+$ cd Server/
 ```
 
 **Installing dependencies**
