@@ -58,31 +58,30 @@ class SignalReceiver(socketio.ClientNamespace):
             + colored("\nExiting Now...Goodbye!", "green")
         )
 
+    def handle_play(self):
+        print(f"[{colored('$','blue')}] Play signal recieved")
+        self.player.play()
+    
     def on_play(self, *args, **kwargs):
-        try:
-            print(f"[{colored('$','blue')}] Play signal recieved")
-            self.player.play()
-        except:
-            pass
+        platform_dependent(linux=self.handle_play)
+
+    def handle_pause(self):
+        print(f"[{colored('$','blue')}] Pause signal recieved")
+        self.player.pause()
 
     def on_pause(self, *args, **kwargs):
-        try:
-            print(f"[{colored('$','blue')}] Pause signal recieved")
-            self.player.pause()
-        except:
-            pass
-        
+        platform_dependent(linux=self.handle_pause)
+
+    def handle_seek(self, state):
+        seek_time = int(time.time() - state["last_updated"] + state["position"])
+        print(
+            f"[{colored('$','blue')}] Seek signal recieved ==> seeking to {colored(seek_time,'yellow')}"
+        )
+        self.player.seek(seek_time)
 
     def on_seek(self, *args, **kwargs):
-        try:
-            state = args[0]
-            seek_time = int(time.time() - state["last_updated"] + state["position"])
-            print(
-                f"[{colored('$','blue')}] Seek signal recieved ==> seeking to {colored(seek_time,'yellow')}"
-            )
-            self.player.seek(seek_time)
-        except:
-            pass
+        state = args[0]
+        platform_dependent(state ,linux=self.handle_seek) 
    
 class ServerConnection:
     # Class that handles all connections to the server
