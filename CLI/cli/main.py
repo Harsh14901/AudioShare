@@ -9,12 +9,19 @@ from multiprocessing import Process, freeze_support
 from termcolor import colored
 
 from vlc_comm import player
-from util import get_videos, getLocalIP, spawn_server, platform_dependent, Unbuffered, nop
+from util import (
+    get_videos,
+    getLocalIP,
+    spawn_server,
+    platform_dependent,
+    Unbuffered,
+    nop,
+)
 from audio_extract import convert_async
 
 import linux_util
 import win_util
-
+import osx_util
 
 
 TO_CLEAR = ["cache", "invite_link.txt", "invite_link.png", "debug.log"]
@@ -76,7 +83,6 @@ def parse():
     return args
 
 
-
 def initialize(videos, server, first=False):
     audio = convert_async(videos, args)
 
@@ -89,21 +95,21 @@ def initialize(videos, server, first=False):
             TO_CLEAR.append(video[:-3] + "ogg")
 
         platform_dependent(video, linux=player.enqueue)
-        
-        if(first):
+
+        if first:
             server.create_room()
 
             def init_player(player):
                 player.play()
                 player.pause()
                 player.seek(0)
-            
-            platform_dependent(player ,linux=init_player)
 
-            
+            platform_dependent(player, linux=init_player)
+
         server.add_track(video)
 
-def clear_files():    
+
+def clear_files():
     for file in TO_CLEAR:
         if os.path.exists(os.path.abspath(file)):
             try:
@@ -113,31 +119,46 @@ def clear_files():
 
 
 def exitHandler(*args, **kwargs):
-    platform_dependent(linux=linux_util.kill_dependencies, windows=win_util.kill_dependencies)
+    platform_dependent(
+        linux=linux_util.kill_dependencies,
+        windows=win_util.kill_dependencies,
+        osx=osx_util.kill_dependencies,
+    )
     clear_files()
-    platform_dependent(linux=linux_util.kill_self, windows=win_util.kill_self)
+    platform_dependent(
+        linux=linux_util.kill_self, windows=win_util.kill_self, osx=osx_util.kill_self
+    )
 
 
 if __name__ == "__main__":
-    
+    print(sys.argv)
 
-    platform_dependent(windows=freeze_support)
+    platform_dependent(windows=freeze_support,osx=freeze_support)
 
     sys.stdout = Unbuffered(sys.stdout)
     signal.signal(signal.SIGINT, exitHandler)
     platform_dependent(windows=colorama.init)
     args = parse()
 
-    platform_dependent(linux=nop if args.web else spawn_server, windows=spawn_server)
-    
+    platform_dependent(
+        linux=nop if args.web else spawn_server,
+        windows=spawn_server,
+        osx=nop if args.web else spawn_server,
+    )
+
     platform_dependent(linux=player.launch)
-    server = platform_dependent(args, linux=linux_util.start_server, windows=win_util.start_server)
+    server = platform_dependent(
+        args,
+        linux=linux_util.start_server,
+        windows=win_util.start_server,
+        osx=osx_util.start_server,
+    )
     platform_dependent(linux=Process(target=player.update, args=(server,)).start)
 
     initialize([args.f[0]], server=server, first=True)
 
     if len(args.f) > 1:
-        initialize(args.f[1:],server)
+        initialize(args.f[1:], server)
 
     print("\n" + colored("#" * 70, "green") + "\n")
     sys.stdout.flush()

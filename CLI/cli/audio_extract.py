@@ -12,9 +12,12 @@ from util import platform_dependent
 
 import linux_util
 import win_util
+import osx_util
 
 BITRATE = 1000 * 16
-ffmpeg = platform_dependent(linux=linux_util.get_ffmpeg, windows=win_util.get_ffmpeg)
+ffmpeg = platform_dependent(
+    linux=linux_util.get_ffmpeg, windows=win_util.get_ffmpeg, osx=osx_util.get_ffmpeg
+)
 
 
 def path2title(path):
@@ -41,7 +44,7 @@ def extract(path, quality="medium"):
     try:
 
         output_path = path[:-3] + "ogg"
-        cmd = [ffmpeg, '-i', path ,'-vn', '-acodec', 'libvorbis', output_path]
+        cmd = [ffmpeg, "-i", path, "-vn", "-acodec", "libvorbis", output_path]
         if os.path.exists(output_path):
             print(
                 f"[{colored('#','yellow')}] Audio file {colored(path2title(output_path),'green')} already exists"
@@ -55,7 +58,9 @@ def extract(path, quality="medium"):
         from util import Animation
 
         anim = Animation()
-        subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).communicate()
+        subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        ).communicate()
         anim.complete()
         print(
             f"[{colored('+','green')}] Extraction completed for file %s"
@@ -73,19 +78,21 @@ def extract(path, quality="medium"):
 
 
 def get_duration(file):
-    cmd = [ffmpeg,'-i',file]
+    cmd = [ffmpeg, "-i", file]
 
-
-    time_str = subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).communicate()
+    time_str = subprocess.Popen(
+        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    ).communicate()
     try:
-        time_str = re.search('Duration: (.*), start', time_str[0].decode()).groups()[0]
-        hours, minutes, seconds = time_str.split(':')
-        return int(hours)*3600 + int(minutes)*60 + float(seconds)
+        time_str = re.search("Duration: (.*), start", time_str[0].decode()).groups()[0]
+        hours, minutes, seconds = time_str.split(":")
+        return int(hours) * 3600 + int(minutes) * 60 + float(seconds)
     except:
-        print(f"[{colored('-','red')}] Unable to fetch duration for file {unquote(file)}")
+        print(
+            f"[{colored('-','red')}] Unable to fetch duration for file {unquote(file)}"
+        )
         sys.exit(-1)
-    
-    
+
 
 def convert2mkv(path):
     out_path = path + ".mkv"
@@ -95,8 +102,10 @@ def convert2mkv(path):
         from util import Animation
 
         anim = Animation()
-        cmd = [ffmpeg, '-i', path , '-codec', 'copy', out_path]
-        subprocess.Popen(cmd,stdout=subprocess.PIPE,stderr=subprocess.STDOUT).communicate()
+        cmd = [ffmpeg, "-i", path, "-codec", "copy", out_path]
+        subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        ).communicate()
         anim.complete()
         print(
             f"[{colored('+','green')}] Successfully converted {colored(path2title(out_path),'green')} to MKV format"
@@ -109,15 +118,16 @@ def convert2mkv(path):
         )
         raise e
 
+
 def convert_async(paths, args):
-    """ Converts video files to audio files asynchronously
-    using a pool of processes """
+    """Converts video files to audio files asynchronously
+    using a pool of processes"""
     files = []
     with Pool() as pool:
         st = time.perf_counter()
         print(f"\n[{colored('+','green')}] Extraction of audio started ...")
         p = pool.starmap_async(extract, product(paths, [args.q]), callback=files.extend)
-        
+
         p.wait()
         print(
             f"[{colored('+','green')}] Completed extraction of {colored(len(paths),'yellow')} file(s) in {colored(time.perf_counter()-st,'yellow')} seconds"

@@ -12,16 +12,19 @@ from termcolor import colored
 
 import win_util
 import linux_util
+import osx_util
+
 
 def nop(*args, **kwargs):
     pass
 
-def platform_dependent( *args, linux=nop, windows=nop, osx=nop, **kwargs):
-    if(sys.platform == 'linux' or sys.platform == 'linux2'):
+
+def platform_dependent(*args, linux=nop, windows=nop, osx=nop, **kwargs):
+    if sys.platform == "linux" or sys.platform == "linux2":
         return linux(*args, **kwargs)
-    elif (sys.platform == 'darwin'):
+    elif sys.platform == "darwin":
         return osx(*args, **kwargs)
-    elif(sys.platform == 'win32'):
+    elif sys.platform == "win32":
         return windows(*args, **kwargs)
     else:
         return nop(*args, **kwargs)
@@ -43,8 +46,8 @@ def wait_until_error(f, timeout=0.5):
 
 
 def send_until_writable(timeout=0.5):
-    """ This will send a message to the socket only when it is writable and wait for timeout seconds
-    for the socket to become writable, if the socket was busy. """
+    """This will send a message to the socket only when it is writable and wait for timeout seconds
+    for the socket to become writable, if the socket was busy."""
 
     def inner(f, socket, message):
         st = time.perf_counter()
@@ -70,14 +73,18 @@ def print_url(url):
     f.write(url)
     f.close()
 
+
 def generate_qr(url):
     image = pyqrcode.create(url)
-    image.png('invite_link.png', scale=10)
+    image.png("invite_link.png", scale=10)
+
 
 def print_qr():
     """ Prints a QR code using the URL that we received from the server. """
     # NOTE add for mac osx
-    platform_dependent(linux=linux_util.print_qr, windows=win_util.print_qr)
+    platform_dependent(
+        linux=linux_util.print_qr, windows=win_util.print_qr, osx=osx_util.print_qr
+    )
 
 
 def path2title(path):
@@ -85,14 +92,17 @@ def path2title(path):
 
 
 def getLocalIP():
-    sock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-    
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
     try:
-        sock.connect(('1.1.1.1',1000))
+        sock.connect(("1.1.1.1", 1000))
         return sock.getsockname()[0]
     except:
-        return input(f"[{colored('$','red')}] Unable to find IP address. Enter your local IP address: ")
-    
+        return input(
+            f"[{colored('$','red')}] Unable to find IP address. Enter your local IP address: "
+        )
+
+
 def resource_path(relative_path):
     """ Get absolute path to resource, works for dev and for PyInstaller """
     try:
@@ -103,8 +113,13 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
+
 def spawn_server():
-    return platform_dependent(linux=linux_util.spawn_server, windows=win_util.spawn_server)
+    return platform_dependent(
+        linux=linux_util.spawn_server,
+        windows=win_util.spawn_server,
+        osx=osx_util.spawn_server,
+    )
 
 
 def get_videos(path, clear_files):
@@ -155,17 +170,18 @@ class Animation:
         self.done = True
         sys.stdout.write("\b..Done!\n")
 
+
 class Unbuffered(object):
-        def __init__(self, stream):
-            self.stream = stream
+    def __init__(self, stream):
+        self.stream = stream
 
-        def write(self, data):
-            self.stream.write(data)
-            self.stream.flush()
+    def write(self, data):
+        self.stream.write(data)
+        self.stream.flush()
 
-        def writelines(self, datas):
-            self.stream.writelines(datas)
-            self.stream.flush()
+    def writelines(self, datas):
+        self.stream.writelines(datas)
+        self.stream.flush()
 
-        def __getattr__(self, attr):
-            return getattr(self.stream, attr)
+    def __getattr__(self, attr):
+        return getattr(self.stream, attr)

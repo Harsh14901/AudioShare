@@ -9,11 +9,10 @@ SERVER_ADDR = "localhost"
 
 # this is used internally by ServerConnection
 class SignalReceiver(socketio.ClientNamespace):
-
-    def __init__(self, *args , **kwargs):
-        self.ARGS = kwargs['params']
-        del kwargs['params']
-        super().__init__(*args ,**kwargs)
+    def __init__(self, *args, **kwargs):
+        self.ARGS = kwargs["params"]
+        del kwargs["params"]
+        super().__init__(*args, **kwargs)
 
     def on_createRoom(self, *args, **kwargs):
         self.roomId = args[0]["roomId"]
@@ -23,19 +22,22 @@ class SignalReceiver(socketio.ClientNamespace):
             url = url % (SERVER_ADDR, self.roomId)
         else:
             url = url % (self.ARGS["localIP"], self.roomId)
-        
-        
-        platform_dependent(f"start \"\" {url.replace('client','host')}", windows=os.system)
+
+        platform_dependent(
+            f"start \"\" {url.replace('client','host')}", windows=os.system
+        )
+        platform_dependent(f"open \"\" {url.replace('client','host')}", osx=os.system)
 
         from util import print_url
+
         print_url(url)
 
-        from util import print_qr,generate_qr
+        from util import print_qr, generate_qr
+
         generate_qr(url)
         if self.ARGS["qr"]:
             print(f"\n[{colored('$','blue')}] Or scan the QR code given below")
             print_qr()
-
 
     def bind(self):
         """ Binds the player instance to this class instance. """
@@ -45,7 +47,6 @@ class SignalReceiver(socketio.ClientNamespace):
 
     """ Functions with name like on_event are executed when a signal named 'event' is recieved from the server. """
 
-    
     def on_connect(self):
         print("connected")
 
@@ -61,7 +62,7 @@ class SignalReceiver(socketio.ClientNamespace):
     def handle_play(self):
         print(f"[{colored('$','blue')}] Play signal recieved")
         self.player.play()
-    
+
     def on_play(self, *args, **kwargs):
         platform_dependent(linux=self.handle_play)
 
@@ -81,28 +82,30 @@ class SignalReceiver(socketio.ClientNamespace):
 
     def on_seek(self, *args, **kwargs):
         state = args[0]
-        platform_dependent(state ,linux=self.handle_seek) 
-   
+        platform_dependent(state, linux=self.handle_seek)
+
+
 class ServerConnection:
     # Class that handles all connections to the server
     server_instance = None
+
     def __init__(self, args=None):
-        if(ServerConnection.server_instance is not None):
+        if ServerConnection.server_instance is not None:
             self = ServerConnection.server_instance
         else:
             try:
                 self.ARGS = {}
-                self.ARGS['web'] = args.web
-                self.ARGS['qr'] = args.qr
-                self.ARGS['onlyHost'] = args.onlyHost
-                self.ARGS['localIP'] = args.localIP
+                self.ARGS["web"] = args.web
+                self.ARGS["qr"] = args.qr
+                self.ARGS["onlyHost"] = args.onlyHost
+                self.ARGS["localIP"] = args.localIP
             except:
                 pass
-            
+
             self.sio = socketio.Client()
             self.sio.connect(f"http://{SERVER_ADDR}:5000")
             self.tracks = {}
-            
+
             self.start_listening()
             ServerConnection.server_instance = self
 
@@ -113,18 +116,21 @@ class ServerConnection:
     def start_listening(self):
         """ Establish connection to the server and start listening for signals from the server """
 
-        self.signals = SignalReceiver("/",params = self.ARGS)
+        self.signals = SignalReceiver("/", params=self.ARGS)
 
         platform_dependent(linux=self.signals.bind)
 
         self.sio.register_namespace(self.signals)
 
-    def track_change(self,videoPath,state):
-        print(f"[{colored('#','yellow')}] Changing track to ", colored(path2title(videoPath),'green') )
-        self.send('changeTrack',{
-            self.tracks[videoPath][0] : self.tracks[videoPath][1],
-            "state": state
-        })
+    def track_change(self, videoPath, state):
+        print(
+            f"[{colored('#','yellow')}] Changing track to ",
+            colored(path2title(videoPath), "green"),
+        )
+        self.send(
+            "changeTrack",
+            {self.tracks[videoPath][0]: self.tracks[videoPath][1], "state": state},
+        )
 
     def add_track(self, videoPath):
         self.send(
@@ -136,22 +142,23 @@ class ServerConnection:
         )
 
     def create_room(self):
-        self.send('createRoom',{
-            "onlyHost": self.ARGS["onlyHost"]
-        })
+        self.send("createRoom", {"onlyHost": self.ARGS["onlyHost"]})
 
-    def upload(self, videoPath ,audioPath):
+    def upload(self, videoPath, audioPath):
         """ Uploads audio file to the webserver """
-        print(f"[{colored('+','green')}] Uploading {colored(path2title(audioPath),'green')} to server ...")
+        print(
+            f"[{colored('+','green')}] Uploading {colored(path2title(audioPath),'green')} to server ..."
+        )
         import requests
 
         url = f"http://{SERVER_ADDR}:5000/api/upload/"
         files = {"file": (path2title(videoPath), open(audioPath, "rb"), "audio/ogg")}
         r = requests.post(url=url, files=files, data={"title": path2title(videoPath)})
 
-        self.tracks[videoPath]= ("trackId" ,r.json()['trackId'])
+        self.tracks[videoPath] = ("trackId", r.json()["trackId"])
         print(
-            f"[{colored('+','green')}] Upload complete for file {colored(path2title(audioPath),'green')}")
+            f"[{colored('+','green')}] Upload complete for file {colored(path2title(audioPath),'green')}"
+        )
 
     def addAudioPath(self, videoPath, audioPath):
         self.tracks[videoPath] = ("audioPath", audioPath)
