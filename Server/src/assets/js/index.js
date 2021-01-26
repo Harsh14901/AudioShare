@@ -82,10 +82,16 @@ document.getElementById('joinRoom').addEventListener('click', () => {
 });
 document.getElementById('offsetPlus').addEventListener('click', () => {
   manualOffset += 0.05;
+  updateOffsetText()
 });
 document.getElementById('offsetMinus').addEventListener('click', () => {
   manualOffset -= 0.05;
+  updateOffsetText()
 });
+
+const updateOffsetText = () => {
+  $('#offset')[0].innerText = `${(manualOffset*1000).toFixed(0)} ms`
+}
 
 socket.on('joinRoom', data => {
   console.log('Present state is: ');

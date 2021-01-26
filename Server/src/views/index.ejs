@@ -13,9 +13,13 @@
     
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <audio controls id="audiosrc" src=""></audio>
+    
     <button id="joinRoom" class="btn btn-outline-success">Click here to join the party!!</button>
-    <button id="offsetMinus" class="btn btn-outline-success">-</button>
-    <button id="offsetPlus" class="btn btn-outline-success">+</button>
+    
+    <p class="centerBlock btn-outline-success">Offset: <span id="offset">0 ms</span></p>
+    <button id="offsetMinus" class="centerBlock btn btn-outline-success">-</button>
+    <button id="offsetPlus" class="centerBlock btn btn-outline-success">+</button>
+    
     <style>
         #joinRoom {
             display: block;
@@ -29,7 +33,6 @@
             position: relative;
             left: 50%;
             top: 50%;
-            /* width: 60%; */
             font-size: 60px;
             transform: translate(-50%, -50%);
         }
@@ -41,6 +44,11 @@
             background-repeat: no-repeat;
             background-attachment: fixed;
             font-size: 60px;
+        }
+
+        .centerBlock {
+            display: table;
+            margin: auto;
         }
     </style>
     <script src="/js/index.js"></script>
