@@ -21,6 +21,7 @@ const maxError = 0.15;
 const eventTimeDiff = 1;
 const interval = 1000;
 let networkOffset = 0;
+let manualOffset = 0;
 let disableEventListener = false;
 let onlyHost = false;
 
@@ -52,6 +53,7 @@ setInterval(() => {
       lastState.position -
       networkOffset +
       0.2
+      + manualOffset
     : lastState.position;
   console.log(audio.currentTime - expectedPosition);
   if (Math.abs(audio.currentTime - expectedPosition) >= maxError) {
@@ -77,6 +79,12 @@ document.getElementById('joinRoom').addEventListener('click', () => {
   socket.emit('joinRoom', {
     roomId: roomId,
   });
+});
+document.getElementById('offsetPlus').addEventListener('click', () => {
+  manualOffset += 0.05;
+});
+document.getElementById('offsetMinus').addEventListener('click', () => {
+  manualOffset -= 0.05;
 });
 
 socket.on('joinRoom', data => {
