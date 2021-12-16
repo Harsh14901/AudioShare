@@ -89,10 +89,10 @@ def initialize(videos, server, first=False):
     for video in videos:
 
         if args.web:
-            server.upload(video, video[:-3] + "ogg")
+            server.upload(video, video[:-3] + "mp3")
         else:
-            server.addAudioPath(video, video[:-3] + "ogg")
-            TO_CLEAR.append(video[:-3] + "ogg")
+            server.addAudioPath(video, video[:-3] + "mp3")
+            TO_CLEAR.append(video[:-3] + "mp3")
 
         platform_dependent(video, linux=player.enqueue)
 
@@ -133,7 +133,7 @@ def exitHandler(*args, **kwargs):
 if __name__ == "__main__":
     print(sys.argv)
 
-    platform_dependent(windows=freeze_support,osx=freeze_support)
+    platform_dependent(windows=freeze_support, osx=freeze_support)
 
     sys.stdout = Unbuffered(sys.stdout)
     signal.signal(signal.SIGINT, exitHandler)
@@ -153,7 +153,8 @@ if __name__ == "__main__":
         windows=win_util.start_server,
         osx=osx_util.start_server,
     )
-    platform_dependent(linux=Process(target=player.update, args=(server,)).start)
+    platform_dependent(linux=Process(
+        target=player.update, args=(server,)).start)
 
     initialize([args.f[0]], server=server, first=True)
 

@@ -17,7 +17,7 @@ const getParams = function (url) {
 
 const socket = io(`http://${addr}/`);
 
-const maxError = 0.15;
+const maxError = 0.25;
 const eventTimeDiff = 1;
 const interval = 1000;
 let networkOffset = 0;
@@ -52,8 +52,8 @@ setInterval(() => {
       lastState.last_updated +
       lastState.position -
       networkOffset +
-      0.2
-      + manualOffset
+      0.2 +
+      manualOffset
     : lastState.position;
   console.log(audio.currentTime - expectedPosition);
   if (Math.abs(audio.currentTime - expectedPosition) >= maxError) {
@@ -82,16 +82,16 @@ document.getElementById('joinRoom').addEventListener('click', () => {
 });
 document.getElementById('offsetPlus').addEventListener('click', () => {
   manualOffset += 0.05;
-  updateOffsetText()
+  updateOffsetText();
 });
 document.getElementById('offsetMinus').addEventListener('click', () => {
   manualOffset -= 0.05;
-  updateOffsetText()
+  updateOffsetText();
 });
 
 const updateOffsetText = () => {
-  $('#offset')[0].innerText = `${(manualOffset*1000).toFixed(0)} ms`
-}
+  $('#offset')[0].innerText = `${(manualOffset * 1000).toFixed(0)} ms`;
+};
 
 socket.on('joinRoom', data => {
   console.log('Present state is: ');

@@ -28,7 +28,7 @@ const ogg2mkv = file => {
 };
 
 const mkv2ogg = file => {
-  return file.substr(0, file.length - 3) + 'ogg';
+  return file.substr(0, file.length - 3) + 'mp3';
 };
 
 const url_from_file = filePath => {
@@ -105,7 +105,7 @@ document.getElementById('startParty').addEventListener('click', () => {
 
 const getFileNameFromPath = path => {
   let fileName = path.substring(path.lastIndexOf('\\') + 1);
-  if (fileName.endsWith('ogg'))
+  if (fileName.endsWith('mp3'))
     fileName = fileName.substring(0, fileName.length - 3);
   return fileName;
 };

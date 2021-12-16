@@ -3,7 +3,7 @@ const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const fs = require("fs");
 const { spawn } = require("child_process");
-const spawnWIN = require('cross-spawn');
+const spawnWIN = require("cross-spawn");
 const { stderr, kill } = require("process");
 const open = require("open");
 const isDev = require("electron-is-dev");
@@ -20,7 +20,10 @@ if (isDev) {
   cache_dir = path.join(app.getPath("cache"), app.getName());
 }
 console.log("cache dir is", cache_dir);
-spawn("mkdir", [`"${cache_dir}"`], {detached:true,shell: process.platform == 'win32'});
+spawn("mkdir", [`"${cache_dir}"`], {
+  detached: true,
+  shell: process.platform == "win32",
+});
 
 let pyCliStat = {
   process: null,
@@ -53,8 +56,7 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, "index.html"));
 
   // Open the DevTools.
-  if(isDev)
-    mainWindow.webContents.openDevTools();
+  if (isDev) mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished
@@ -68,10 +70,8 @@ app.on("ready", createWindow);
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {
     if (pyCliStat.process) {
-      if(process.platform == 'win32')
-        treekill(pyCliStat.process.pid);
-      else
-        kill(-pyCliStat.process.pid,'SIGINT');
+      if (process.platform == "win32") treekill(pyCliStat.process.pid);
+      else kill(-pyCliStat.process.pid, "SIGINT");
     }
     app.quit();
   }
@@ -103,21 +103,22 @@ const runCLI = async (arg) => {
     commandArgs.push(`"${file}"`);
   });
   if (arg.onlyHost) {
-    commandArgs.push("--only-host");
+    commandArgs.push("--control");
   }
-
   if (arg.qr) {
     commandArgs.push("--qr");
   }
-  const command = `"${binary_dir.toString()}/LocalParty${process.platform == 'win32'?'.exe':''}"`;
+  const command = `"${binary_dir.toString()}/LocalParty${
+    process.platform == "win32" ? ".exe" : ""
+  }"`;
   console.log(commandArgs);
-  
+
   const pyCli = spawnWIN(command, commandArgs, {
     cwd: cache_dir,
     shell: true,
-    detached: process.platform != 'win32',
+    detached: process.platform != "win32",
   });
-  
+
   pyCliStat.process = pyCli;
   pyCliStat.numInstances += 1;
 
@@ -174,7 +175,7 @@ ipcMain.on("show_qr", (event) => {
 // eslint-disable-next-line no-unused-vars
 ipcMain.on("killCLI", (event, arg) => {
   if (!pyCliStat.process) return;
-  treekill(pyCliStat.process.pid,'SIGINT');
+  treekill(pyCliStat.process.pid, "SIGINT");
 
   console.log("CLI killed");
 

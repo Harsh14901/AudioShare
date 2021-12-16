@@ -43,8 +43,8 @@ def extract(path, quality="medium"):
 
     try:
 
-        output_path = path[:-3] + "ogg"
-        cmd = [ffmpeg, "-i", path, "-vn", "-acodec", "libvorbis", output_path]
+        output_path = path[:-3] + "mp3"
+        cmd = [ffmpeg, "-i", path, "-vn", "-acodec", "mp3", output_path]
         if os.path.exists(output_path):
             print(
                 f"[{colored('#','yellow')}] Audio file {colored(path2title(output_path),'green')} already exists"
@@ -84,7 +84,8 @@ def get_duration(file):
         cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
     ).communicate()
     try:
-        time_str = re.search("Duration: (.*), start", time_str[0].decode()).groups()[0]
+        time_str = re.search("Duration: (.*), start",
+                             time_str[0].decode()).groups()[0]
         hours, minutes, seconds = time_str.split(":")
         return int(hours) * 3600 + int(minutes) * 60 + float(seconds)
     except:
@@ -126,7 +127,8 @@ def convert_async(paths, args):
     with Pool() as pool:
         st = time.perf_counter()
         print(f"\n[{colored('+','green')}] Extraction of audio started ...")
-        p = pool.starmap_async(extract, product(paths, [args.q]), callback=files.extend)
+        p = pool.starmap_async(extract, product(
+            paths, [args.q]), callback=files.extend)
 
         p.wait()
         print(

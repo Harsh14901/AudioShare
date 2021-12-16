@@ -8,6 +8,8 @@ from termcolor import colored
 SERVER_ADDR = "localhost"
 
 # this is used internally by ServerConnection
+
+
 class SignalReceiver(socketio.ClientNamespace):
     def __init__(self, *args, **kwargs):
         self.ARGS = kwargs["params"]
@@ -26,7 +28,8 @@ class SignalReceiver(socketio.ClientNamespace):
         platform_dependent(
             f"start \"\" {url.replace('client','host')}", windows=os.system
         )
-        platform_dependent(f"open \"\" {url.replace('client','host')}", osx=os.system)
+        platform_dependent(
+            f"open \"\" {url.replace('client','host')}", osx=os.system)
 
         from util import print_url
 
@@ -74,7 +77,8 @@ class SignalReceiver(socketio.ClientNamespace):
         platform_dependent(linux=self.handle_pause)
 
     def handle_seek(self, state):
-        seek_time = int(time.time() - state["last_updated"] + state["position"])
+        seek_time = int(
+            time.time() - state["last_updated"] + state["position"])
         print(
             f"[{colored('$','blue')}] Seek signal recieved ==> seeking to {colored(seek_time,'yellow')}"
         )
@@ -129,7 +133,7 @@ class ServerConnection:
         )
         self.send(
             "changeTrack",
-            {self.tracks[videoPath][0]: self.tracks[videoPath][1], "state": state},
+            {self.tracks[videoPath][0]                : self.tracks[videoPath][1], "state": state},
         )
 
     def add_track(self, videoPath):
@@ -152,8 +156,10 @@ class ServerConnection:
         import requests
 
         url = f"http://{SERVER_ADDR}:5000/api/upload/"
-        files = {"file": (path2title(videoPath), open(audioPath, "rb"), "audio/ogg")}
-        r = requests.post(url=url, files=files, data={"title": path2title(videoPath)})
+        files = {"file": (path2title(videoPath), open(
+            audioPath, "rb"), "audio/mp3")}
+        r = requests.post(url=url, files=files, data={
+                          "title": path2title(videoPath)})
 
         self.tracks[videoPath] = ("trackId", r.json()["trackId"])
         print(
