@@ -101,11 +101,13 @@ $('#errSlider').on('change', e => {
 const updateOffsetText = () => {
   $('#offsetVal')[0].innerText = `${(manualOffset * 1000).toFixed(0)} ms`;
 };
+$('#offsetSlider').val(manualOffset * 1000);
 updateOffsetText();
 
 const updateErrText = () => {
   $('#errorVal')[0].innerText = maxError.toFixed(2);
 };
+$('#errSlider').val(maxError);
 updateErrText();
 
 socket.on('joinRoom', data => {

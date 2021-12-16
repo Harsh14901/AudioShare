@@ -17,7 +17,7 @@ from util import (
     Unbuffered,
     nop,
 )
-from audio_extract import convert_async
+from audio_extract import convert_async, path2title
 
 import linux_util
 import win_util
@@ -78,23 +78,38 @@ def parse():
     videos = []
     for i in range(len(args.f)):
         args.f[i] = os.path.abspath(args.f[i])
-        videos.extend(get_videos(args.f[i], TO_CLEAR))
+        files = []
+        if not os.path.exists(args.f[i]):
+            print("Path doesnot exist: ", args.f[i])
+        if os.path.isdir(args.f[i]):
+            for file in os.listdir(args.f[i]):
+                files.append(os.path.join(args.f[i], file))
+        elif os.path.isfile(args.f[i]):
+            files = [args.f[i]]
+        videos.extend(files)
+        # videos.extend(get_videos(args.f[i], TO_CLEAR))
     args.f = videos
     return args
 
 
-def initialize(videos, server, first=False):
-    audio = convert_async(videos, args)
+def initialize(video_paths, server, first=False):
+    converted = convert_async(video_paths, args)
+    # print("Video paths: ", video_paths, "converted: ", converted)
+    if first and converted[0] == (None, None):
+        raise ValueError("Invalid video path")
 
-    for video in videos:
-
+    for video_path, (audio_path, temp_mkv) in zip(video_paths, converted):
+        if temp_mkv is not None:
+            video_path = temp_mkv
+            TO_CLEAR.append(temp_mkv)
+        
         if args.web:
-            server.upload(video, video[:-3] + "mp3")
+            server.upload(video_path, audio_path)
         else:
-            server.addAudioPath(video, video[:-3] + "mp3")
-            TO_CLEAR.append(video[:-3] + "mp3")
+            server.addAudioPath(video_path, audio_path)
+            TO_CLEAR.append(audio_path)
 
-        platform_dependent(video, linux=player.enqueue)
+        platform_dependent(video_path, linux=player.enqueue)
 
         if first:
             server.create_room()
@@ -106,7 +121,7 @@ def initialize(videos, server, first=False):
 
             platform_dependent(player, linux=init_player)
 
-        server.add_track(video)
+        server.add_track(video_path)
 
 
 def clear_files():
@@ -155,11 +170,18 @@ if __name__ == "__main__":
     )
     platform_dependent(linux=Process(
         target=player.update, args=(server,)).start)
+    done = False
+    while not done and len(args.f) > 0:
+        try:
+            initialize([args.f[0]], server=server, first=True)
+            done = True
+            args.f.pop(0)
+        except ValueError:
+            args.f.pop(0)
+            
 
-    initialize([args.f[0]], server=server, first=True)
-
-    if len(args.f) > 1:
-        initialize(args.f[1:], server)
+    if len(args.f) > 0:
+        initialize(args.f, server)
 
     print("\n" + colored("#" * 70, "green") + "\n")
     sys.stdout.flush()

@@ -142,13 +142,12 @@ def get_videos(path, clear_files):
                     return [new_file]
                 except Exception as e:
                     print(e)
-                    return []
-        return []
-    if os.path.isdir(path):
-        ans = []
-        for file in os.listdir(path):
-            ans.extend(get_videos(path + "/" + file, clear_files))
-        return ans
+    # if os.path.isdir(path):
+    #     ans = []
+    #     for file in os.listdir(path):
+    #         ans.extend(get_videos(path + "/" + file, clear_files))
+    #     return ans
+    return [None]
 
 
 class Animation:

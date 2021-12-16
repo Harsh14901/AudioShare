@@ -9,7 +9,7 @@ from itertools import product
 from multiprocessing import Pool
 from urllib.parse import unquote
 
-from util import platform_dependent
+from util import get_videos, platform_dependent
 
 import linux_util
 import win_util
@@ -41,7 +41,11 @@ def get_multiplier(quality):
 
 def extract(path):
     """ Extractor function utilizing ffmpeg to extract audio from a given video file """
-
+    clear_files = []
+    path, = get_videos(path, clear_files)
+    clear_files = (None if len(clear_files) == 0 else clear_files[0])
+    if path is None:
+        return None, None
     try:
 
         output_path = path[:-3] + "mp3"
@@ -50,7 +54,7 @@ def extract(path):
             print(
                 f"[{colored('#','yellow')}] Audio file {colored(path2title(output_path),'green')} already exists"
             )
-            return output_path
+            return output_path, clear_files
         print(
             f"\n[{colored('+','green')}] Extracting audio for file %s"
             % (colored(path2title(path), "green")),
@@ -75,7 +79,7 @@ def extract(path):
         )
         sys.exit(-1)
 
-    return output_path
+    return output_path, clear_files
 
 
 def get_duration(file):
