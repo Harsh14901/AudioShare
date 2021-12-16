@@ -17,7 +17,7 @@ const getParams = function (url) {
 
 const socket = io(`http://${addr}/`);
 
-const maxError = 0.25;
+let maxError = 0.25;
 const eventTimeDiff = 1;
 const interval = 1000;
 let networkOffset = 0;
@@ -80,18 +80,33 @@ document.getElementById('joinRoom').addEventListener('click', () => {
     roomId: roomId,
   });
 });
-document.getElementById('offsetPlus').addEventListener('click', () => {
-  manualOffset += 0.05;
-  updateOffsetText();
-});
-document.getElementById('offsetMinus').addEventListener('click', () => {
-  manualOffset -= 0.05;
+// document.getElementById('offsetPlus').addEventListener('click', () => {
+//   manualOffset += 0.05;
+//   updateOffsetText();
+// });
+// document.getElementById('offsetMinus').addEventListener('click', () => {
+//   manualOffset -= 0.05;
+//   updateOffsetText();
+// });
+$('#offsetSlider').on('change', e => {
+  manualOffset = parseFloat($('#offsetSlider').val()) / 1000.0;
   updateOffsetText();
 });
 
+$('#errSlider').on('change', e => {
+  maxError = parseFloat($('#errSlider').val());
+  updateErrText();
+});
+
 const updateOffsetText = () => {
-  $('#offset')[0].innerText = `${(manualOffset * 1000).toFixed(0)} ms`;
+  $('#offsetVal')[0].innerText = `${(manualOffset * 1000).toFixed(0)} ms`;
 };
+updateOffsetText();
+
+const updateErrText = () => {
+  $('#errorVal')[0].innerText = maxError.toFixed(2);
+};
+updateErrText();
 
 socket.on('joinRoom', data => {
   console.log('Present state is: ');

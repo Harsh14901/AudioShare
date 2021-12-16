@@ -7,6 +7,7 @@ import time
 from termcolor import colored
 from itertools import product
 from multiprocessing import Pool
+from urllib.parse import unquote
 
 from util import platform_dependent
 
@@ -38,7 +39,7 @@ def get_multiplier(quality):
     return 6
 
 
-def extract(path, quality="medium"):
+def extract(path):
     """ Extractor function utilizing ffmpeg to extract audio from a given video file """
 
     try:
@@ -128,7 +129,7 @@ def convert_async(paths, args):
         st = time.perf_counter()
         print(f"\n[{colored('+','green')}] Extraction of audio started ...")
         p = pool.starmap_async(extract, product(
-            paths, [args.q]), callback=files.extend)
+            paths), callback=files.extend)
 
         p.wait()
         print(

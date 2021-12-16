@@ -1,58 +1,64 @@
 <html>
-
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="/socket.io/socket.io.js"></script>
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/axios.min.js"></script>
-    
-</head>
+  </head>
 
-<body>
-    
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <audio controls id="audiosrc" src=""></audio>
-    
-    <button id="joinRoom" class="btn btn-outline-success">Click here to join the party!!</button>
-    
-    <p class="centerBlock btn-outline-success">Offset: <span id="offset">0 ms</span></p>
-    <button id="offsetMinus" class="centerBlock btn btn-outline-success">-</button>
-    <button id="offsetPlus" class="centerBlock btn btn-outline-success">+</button>
-    
+  <body>
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
+
+    <div>
+      <p class="btn-outline-success h2 text-center mt-5">
+        Error: <span id="errorVal">0 </span>
+      </p>
+      <input
+        type="range"
+        class="form-range slider my-2"
+        min="0.0"
+        max="2.0"
+        step="0.05"
+        id="errSlider"
+      />
+    </div>
+    <div>
+      <p class="btn-outline-success h2 text-center my-2">
+        Offset: <span id="offsetVal">0 ms</span>
+      </p>
+      <input
+        type="range"
+        class="form-range slider my-2"
+        min="-5000"
+        max="5000"
+        step="50"
+        id="offsetSlider"
+      />
+    </div>
+    <div>
+      <audio controls id="audiosrc" src="" class="d-block mx-auto my-5"></audio>
+
+      <button id="joinRoom" class="btn btn-outline-success d-block m-auto">
+        Click here to join the party!!
+      </button>
+    </div>
+
     <style>
-        #joinRoom {
-            display: block;
-            position: relative;
-            margin: auto;
-            top: 50%;
-        }
+      body {
+        background-color: #323232;
+        background-position: center center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        font-size: 60px;
+      }
 
-        #audiosrc {
-            display: block;
-            position: relative;
-            left: 50%;
-            top: 50%;
-            font-size: 60px;
-            transform: translate(-50%, -50%);
-        }
-
-        body {
-            background-color: #323232;
-            background-position: center center;
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            font-size: 60px;
-        }
-
-        .centerBlock {
-            display: table;
-            margin: auto;
-        }
+      .slider {
+        width: 70%;
+        margin: 0% 15% 0% 15%;
+      }
     </style>
     <script src="/js/index.js"></script>
-    
-</body>
-
+  </body>
 </html>

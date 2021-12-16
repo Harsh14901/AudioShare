@@ -51,20 +51,20 @@ def parse():
         dest="onlyHost",
         action="store_true",
     )
-    parser.add_argument(
-        "--force-rebuild",
-        help="Force rebuild of the local server",
-        dest="rebuild",
-        action="store_true",
-    )
-    parser.add_argument(
-        "--audio-quality",
-        dest="q",
-        help="Audio quality to sync from",
-        choices=["low", "medium", "good", "high"],
-        type=str,
-        default="medium",
-    )
+    # parser.add_argument(
+    #     "--force-rebuild",
+    #     help="Force rebuild of the local server",
+    #     dest="rebuild",
+    #     action="store_true",
+    # )
+    # parser.add_argument(
+    #     "--audio-quality",
+    #     dest="q",
+    #     help="Audio quality to sync from",
+    #     choices=["low", "medium", "good", "high"],
+    #     type=str,
+    #     default="medium",
+    # )
 
     group.add_argument(
         "--web",

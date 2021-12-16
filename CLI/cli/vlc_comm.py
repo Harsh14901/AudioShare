@@ -7,6 +7,7 @@ from util import send_until_writable, wait_until_error, path2title
 from audio_extract import get_duration
 import os
 from termcolor import colored
+from urllib.parse import unquote
 
 PORT = 1234
 
@@ -25,7 +26,8 @@ class VLCplayer:  # Class that manages the VLC player instance on the machine.
     def launch(self):
         """ Launches a VLC instance """
 
-        bashCommand = "vlc --extraintf rc --rc-host localhost:%d -vv --one-instance" % (self.port)
+        bashCommand = "vlc --extraintf rc --rc-host localhost:%d -vv --one-instance" % (
+            self.port)
 
         # Start a subprocess to execute the VLC command
         self.proc = subprocess.Popen(
@@ -91,7 +93,8 @@ class VLCplayer:  # Class that manages the VLC player instance on the machine.
         if "last_updated" in state.keys():
             initial_pos = state["position"]
             extra = (
-                time.time() - float(state["last_updated"]) if state["is_playing"] else 0
+                time.time() - float(state["last_updated"]
+                                    ) if state["is_playing"] else 0
             )
             final_pos = initial_pos + extra
             state["position"] = final_pos
@@ -100,7 +103,7 @@ class VLCplayer:  # Class that manages the VLC player instance on the machine.
 
 
 def on_start(match, state, server):
-    from urllib.parse import unquote
+
     file = unquote(match.groups()[0])
 
     state["path"] = file
@@ -110,7 +113,8 @@ def on_start(match, state, server):
     state["position"] = 0.0
     state["last_updated"] = time.time()
 
-    server.track_change(videoPath=file,state=state)
+    server.track_change(videoPath=file, state=state)
+
 
 def on_stop(match, state, server):
     state["is_playing"] = False
@@ -139,7 +143,8 @@ def on_pause(match, state, server):
     if state["is_playing"]:
         state["is_playing"] = False
         state["position"] = (
-            player.getState()["position"] if player.getState() is not None else 0
+            player.getState()[
+                "position"] if player.getState() is not None else 0
         )
         state["last_updated"] = time.time()
         server.send("pause", state)
@@ -165,6 +170,7 @@ def on_seek(match, state, server):
         state["position"] = int(match) / 1000
         state["last_updated"] = time.time()
     # server.send("seek", state)
+
 
 def on_seek_complete(match, state, server):
     state["last_updated"] = time.time()
@@ -211,5 +217,6 @@ def parse_logs(player, server):
 
         # Dump the parsed data into cache
         open("cache", "w").write(json.dumps(state))
+
 
 player = VLCplayer()
