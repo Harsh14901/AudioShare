@@ -5,4 +5,5 @@ venv/
 *.log
 invite_link.*
 .vscode/
-binaries
+binaries.gitsecret/keys/random_seed
+!*.secret
